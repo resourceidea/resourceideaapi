@@ -5,6 +5,9 @@ from django.utils import timezone
 
 from common.enums import ProgressStatus
 from common.models import BaseModel
+from employee.models import Employee
+from organization.models import Organization
+from engagement.models import Engagement
 
 
 class TaskAssignment(BaseModel):
@@ -17,9 +20,9 @@ class TaskAssignment(BaseModel):
     status = models.CharField(max_length=100, choices=[(status.value, status.value) for status in ProgressStatus])
     start_date_time = models.DateTimeField(null=True, blank=True)
     end_date_time = models.DateTimeField(null=True, blank=True)
-    employee = models.ForeignKey('Employee', null=True, on_delete=models.SET_NULL)
-    organization = models.ForeignKey('Organization', null=True, on_delete=models.SET_NULL)
-    engagement = models.ForeignKey('Engagement', null=True, blank=True, on_delete=models.SET_NULL)
+    employee = models.ForeignKey(Employee, null=True, on_delete=models.SET_NULL)
+    organization = models.ForeignKey(Organization, null=True, on_delete=models.SET_NULL)
+    engagement = models.ForeignKey(Engagement, null=True, blank=True, on_delete=models.SET_NULL)
 
     @property
     def engagement_title(self) -> str:

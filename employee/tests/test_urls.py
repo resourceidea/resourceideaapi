@@ -145,3 +145,20 @@ class TestEmployeeEndpoints:
         assert response.status_code == 200
         assert response.request['PATH_INFO'] == '/api/v0.1/employees/'
         assert response.request['QUERY_STRING'] == 'view=resources'
+
+    def test_resource_timeline(self, api_client) -> None:
+        """
+        Test list resource timeline
+        """
+        url = reverse('resources-timeline')
+        response = api_client.get(url)
+        response_json = response.json()
+
+        assert response.status_code == 200
+        assert "data" in response_json
+        assert isinstance(response_json["data"], list)
+        assert "assignments" in response_json["data"][0]
+        assert "fullname" in response_json["data"][0]
+        assert "utilization" in response_json["data"][0]
+        assert "job_position" in response_json["data"][0]
+        assert "link_url" in response_json["data"][0]

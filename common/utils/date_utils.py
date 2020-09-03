@@ -2,72 +2,73 @@ from datetime import date
 from datetime import datetime
 from datetime import time
 from datetime import timedelta
-from typing import Optional
+
+from common.constants import LUNCH_END_TIME
+from common.constants import LUNCH_START_TIME
+from common.constants import WORK_HOURS_END
+from common.constants import WORK_HOURS_START
+from common.exceptions import InvalidOperationException
 
 
-def get_workings_hours_between_dates(start_date: date, end_date: date) -> float:
-    """Get the working hours between two dates
+def get_working_hours(period_start: datetime, period_end: datetime) -> float:
+    """Get the number of working hours in a given period
 
     Args:
-        start_date(date): Period start date.
-        end_date(date): Period end date.
+        period_start(datetime): Date and time at the start of the period.
+        period_end(datetime): Date and time at the end of the period.
 
     Returns:
-        Total number of working hours in the period as a float.
-    """
-    total_period_hours: float = 0.0
+        Working hours as a float.
 
+    Raises:
+        InvalidOperationException if the period start is older than the period end.
+    """
+
+    if period_start > period_end:
+        raise InvalidOperationException("Period start can not come after the end date and time")
+
+    start_date: date = period_start.date()
+    start_time: time = period_start.time()
+    end_date: date = period_end.date()
+    end_time: time = period_end.time()
+
+    working_hours: float = 0.0
     loop_date: date = start_date
     while loop_date <= end_date:
-        if loop_date.weekday() < 5:  # Date is not a weekend.
-            loop_date_start: datetime = datetime.combine(loop_date, time(hour=8, minute=0, second=0))
-            loop_date_end: datetime = datetime.combine(loop_date, time(hour=17, minute=0, second=0))
-            loop_date_delta: timedelta = loop_date_end - loop_date_start
-            loop_hours: float = (loop_date_delta.total_seconds() / 3600) - 1.0  # subtract the lunch hour
+        if loop_date.weekday() < 5:  # Date is not a weekend
+            loop_date_start: datetime = get_loop_date_start(loop_date, start_date, start_time)
+            loop_date_end: datetime = get_loop_date_end(loop_date, end_date, end_time)
 
-            total_period_hours += loop_hours
-
-        loop_date = loop_date + timedelta(1)  # Go to the next date
-
-    return total_period_hours
-
-
-def get_workings_hours_between_datetimes(start_date_time: datetime, end_date_time: datetime) -> float:
-    """Get the working hours between two datetimes.
-
-    Args:
-        start_date_time(datetime): Period start date and time.
-        end_date_time(datetime): Period end date and time.
-
-    Returns:
-        Total number of working hours in the period as a float.
-    """
-    total_period_hours: float = 0.0
-
-    loop_date: datetime = start_date_time
-    while loop_date <= end_date_time:
-        if loop_date.weekday() < 5:  # Date is not a weekend.
-            loop_date_end: datetime = datetime.combine(loop_date.date(), time(hour=17, minute=0, second=0))
-            loop_date_delta: Optional[timedelta] = None
+            loop_delta: timedelta = loop_date_end - loop_date_start
             loop_hours: float = 0.0
-            if end_date_time < loop_date_end:
-                lunch_start: datetime = datetime.combine(end_date_time.date(), time(hour=13, minute=0, second=0))
-                lunch_end: datetime = datetime.combine(end_date_time.date(), time(hour=14, minute=0, second=0))
-                if end_date_time <= lunch_start:  # End date and time come before lunch.
-                    loop_date_delta = end_date_time - loop_date
-                    loop_hours = loop_date_delta.total_seconds() / 3600
-                elif end_date_time > lunch_start and end_date_time <= lunch_end:  # End date and time in lunch period.
-                    loop_date_delta = lunch_start - loop_date
-                    loop_hours = loop_date_delta.total_seconds() / 3600
-                else:  # End date and time comes after lunch.
-                    loop_date_delta = end_date_time - loop_date
-                    loop_hours = (loop_date_delta.total_seconds() / 3600) - 1
-            else:  # Period end does happen on the date being looped
-                loop_date_delta = loop_date_end - loop_date
-                loop_hours = (loop_date_delta.total_seconds() / 3600) - 1
+            if loop_date_start.time() >= time(14, 0, 0) or loop_date_end.time() <= time(12, 59, 59, 999999):
+                loop_hours = loop_delta.total_seconds() / 3600
+            else:
+                loop_hours = (loop_delta.total_seconds() / 3600) - 1
+            working_hours += loop_hours
 
-            total_period_hours += loop_hours
+        loop_date += timedelta(1)
 
-        loop_date = datetime.combine((loop_date.date() + timedelta(1)), time(hour=8, minute=0, second=0))
+    return working_hours
 
-    return total_period_hours
+
+def get_loop_date_end(loop_date, end_date, end_time):
+    if end_time >= LUNCH_START_TIME and end_time <= LUNCH_END_TIME:
+        end_time = time(12, 59, 59, 999999)
+
+    if loop_date == end_date and end_time < WORK_HOURS_END:
+        loop_date_end = datetime.combine(end_date, end_time)
+    else:
+        loop_date_end = datetime.combine(loop_date, WORK_HOURS_END)
+    return loop_date_end
+
+
+def get_loop_date_start(loop_date, start_date, start_time):
+    if start_time >= LUNCH_START_TIME and start_time <= LUNCH_END_TIME:
+        start_time = time(14, 0, 0, 0)
+
+    if loop_date == start_date and start_time >= WORK_HOURS_START:
+        loop_date_start = datetime.combine(start_date, start_time)
+    else:
+        loop_date_start = datetime.combine(loop_date, WORK_HOURS_START)
+    return loop_date_start

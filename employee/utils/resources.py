@@ -1,4 +1,5 @@
-from datetime import date
+from common.utils.date_utils import get_working_hours
+from datetime import date, datetime, time
 from typing import Dict
 from typing import List
 from uuid import UUID
@@ -6,10 +7,7 @@ from uuid import UUID
 from django.db.models.query import QuerySet
 from rest_framework.reverse import reverse
 
-from client import utils as client_utils
 from common.utils.queryset import filter_by_organization
-from common.utils.date_utils import get_workings_hours_between_dates
-from common.utils.date_utils import get_workings_hours_between_datetimes
 from employee.models import Employee
 from task_assignment.models import TaskAssignment
 from task_assignment import utils as task_assignment_utils
@@ -26,13 +24,14 @@ def get_resource_utilization(resource_assignments: List[Dict], start_date: date,
         Utilization score as a percentage value.
     """
     utilization_score: float = 0.0
-    total_period_hours: float = get_workings_hours_between_dates(start_date, end_date)
+    period_start: datetime = datetime.combine(start_date, time(8, 0, 0))
+    period_end: datetime = datetime.combine(end_date, time(17, 0, 0))
+    total_period_hours: float = get_working_hours(period_start, period_end)
 
     if resource_assignments:
         total_assignment_hours: float = 0.0
         for assignment in resource_assignments:
-            assigned_hours: float = get_workings_hours_between_datetimes(assignment['start_date'],
-                                                                         assignment['end_date'])
+            assigned_hours: float = get_working_hours(assignment['start_date'], assignment['end_date'])
             total_assignment_hours += assigned_hours
         utilization_score = (total_assignment_hours / total_period_hours) * 100
 
@@ -50,6 +49,7 @@ def get_resource_assignments(resource_id: UUID, organization_id: UUID, start_dat
     Returns:
         Assignments made to a resource as a list of dictionaries.
     """
+    # TODO (Joseph Serunjogi): Restrict to period to a month. To be updated to other periods.
     resource_assignments: List[Dict] = []
     assignments_queryset: QuerySet = filter_by_organization(model=TaskAssignment, organization_id=organization_id)  # type: ignore
     if assignments_queryset:
@@ -61,7 +61,7 @@ def get_resource_assignments(resource_id: UUID, organization_id: UUID, start_dat
             entry: Dict = {
                 'client': {
                     'name': assignment.client.name,
-                    'link_url': client_utils.get_client_link_url(assignment.client.id)
+                    'client_id': assignment.client.id
                 },
                 'engagement': {
                     'title': assignment.engagement_title,
@@ -115,7 +115,7 @@ def get_resource_timelines_by_date(organization_id: UUID, start_date: date, end_
 
             resource_timeline: Dict = {
                 'fullname': resource.fullname,
-                'utlization': utilization_score,
+                'utilization': utilization_score,
                 'job_position': resource.job_position_title,
                 'link_url': get_resource_link_url(resource.id),
                 'assignments': assignments
