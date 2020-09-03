@@ -1,3 +1,4 @@
+from common.utils.queryset import filter_by_organization
 from rest_framework import mixins
 from rest_framework import viewsets  # type: ignore
 from task_assignment.models import TaskAssignment
@@ -12,5 +13,10 @@ class TaskAssignmentViewSet(mixins.CreateModelMixin,
                             viewsets.GenericViewSet):
     """Task assignment view set."""
 
-    queryset = TaskAssignment.objects.all()  # type: ignore
+    queryset = TaskAssignment.objects.none()  # type: ignore
     serializer_class = TaskAssignmentSerializer
+
+    def get_queryset(self):
+        queryset = filter_by_organization(model=TaskAssignment,  # type: ignore
+                                          organization_id=self.request.user.employee.organization_id)
+        return queryset

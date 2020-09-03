@@ -1,14 +1,32 @@
-from typing import TypeVar, Generic
+from typing import Generic
+from typing import TypeVar
+from uuid import UUID
 
 from django.db.models import QuerySet
 
+from task_assignment.models import TaskAssignment
+from organization.models import Organization
+from job_position.models import JobPosition
 from client.models import Client
 from client_industry.models import ClientIndustry
+from employee.models import Employee
+from engagement.models import Engagement
+from department.models import Department
+from lineofservice.models import LineOfService
 
-T = TypeVar('T', Client, ClientIndustry)
+T = TypeVar('T',
+            Client,
+            ClientIndustry,
+            Department,
+            Employee,
+            Engagement,
+            JobPosition,
+            LineOfService,
+            Organization,
+            TaskAssignment)
 
 
-def filter_by_organization(model: Generic[T], organization_id: str) -> QuerySet:  # type: ignore
+def filter_by_organization(model: Generic[T], organization_id: UUID) -> QuerySet:  # type: ignore
     """
     Filters active resources that belong to an organization.
 
