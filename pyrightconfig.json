@@ -1,0 +1,20 @@
+{
+    "exclude": [
+        "**/typings",
+        "~/.pyenv/versions/resourceidea"
+    ],
+    "stubPath": "typings",
+    "venvPath": "/Users/josephserunjogi/.pyenv/versions/3.8.2/envs/resourceideaapi",
+    "pythonVersion": "3.8",
+    "typeCheckingMode": "basic",
+    "reportUndefinedVariable": true,
+    "reportAssertAlwaysTrue": true,
+    "reportUnusedImport": true,
+    "reportImportCycles": true,
+    "reportUnusedClass": true,
+    "reportUnusedFunction": true,
+    "reportUnusedVariable": true,
+    "reportDuplicateImport": true,
+    "reportMissingImports": true,
+    "reportMissingTypeStubs": true
+}

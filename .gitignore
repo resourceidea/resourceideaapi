@@ -89,6 +89,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.env.dev
+.env.local
 
 # Spyder project settings
 .spyderproject
@@ -102,3 +104,25 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# PyCharm
+.idea
+.idea/
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+
+# VSCode
+.vscode
+.vscode/
+
+!/resourceideaapi/static/
+.DS_Store
+/.env.dev
+/.env.local
+resourceideaapi/static
+
+#pyright
+typings/

@@ -1,0 +1,75 @@
+name: CI workflow
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - prod
+  
+  push:
+    branches:
+      - '**'
+      - '!develop'
+      - '!prod'
+
+env:
+  POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+  POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+  POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+  DJANGO_SETTINGS_MODULE: resourceideaapi.settings
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v2
+      - name: Setup python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - name: Upgrade pip
+        run: pip install --upgrade pip
+      - name: Install dev requirements
+        run: pip install -r requirements.dev.txt
+      - name: Linting with flake8
+        run: flake8
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    needs: [build]
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v2 
+      - name: Setup python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - name: Upgrade pip
+        run: pip install --upgrade pip
+      - name: Install requirements
+        run: |
+          pip install -r requirements.dev.txt
+          pip install -r requirements.txt
+      - name: Run migrations
+        run: python manage.py migrate
+      - name: Run system tests
+        run: pytest -m system
