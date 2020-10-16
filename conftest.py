@@ -54,7 +54,7 @@ def api_client(employee: Employee):
 def employees_list(organization):
     fake_employees_list: List = []
     for i in range(5):
-        fake_employee = EmployeeFactory(organization=organization)
+        fake_employee = EmployeeFactory(organization=organization)  # type: ignore
         if i in [1, 2, 3]:
             fake_employee.is_resource = False
         fake_employee.save()
