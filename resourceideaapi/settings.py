@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'corsheaders',
+
     'common',
 
     'rest_framework',
@@ -61,6 +63,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'common.middleware.timestamp.RequestTimeStampMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -157,6 +160,13 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ]
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:5000",
+    "https://127.0.0.1:5001",
+    "http://localhost:5000",
+    "https://localhost:5001"
+]
 
 # Sentry monitoring setup
 sentry_sdk.init(

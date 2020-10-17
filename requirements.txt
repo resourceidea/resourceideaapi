@@ -8,6 +8,7 @@ click==7.1.2
 coverage==5.1
 distlib==0.3.0
 Django==2.2.13
+django-cors-headers==3.5.0
 djangorestframework==3.11.0
 djangorestframework-simplejwt==4.4.0
 execnet==1.7.1
@@ -42,6 +43,7 @@ python-dateutil==2.8.1
 pytz==2020.1
 regex==2020.5.14
 requests==2.23.0
+rope==0.17.0
 sentry-sdk==0.16.2
 six==1.14.0
 sqlparse==0.3.1
