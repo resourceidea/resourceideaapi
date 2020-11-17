@@ -166,7 +166,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://127.0.0.1:5001",
     "http://localhost:5000",
     "https://localhost:5001",
-    "https://localhost:44357"
+    "https://localhost:44373/"
 ]
 
 # Sentry monitoring setup
