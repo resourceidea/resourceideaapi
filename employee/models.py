@@ -16,7 +16,7 @@ class Employee(BaseModel):
     phone_number_confirmed = models.BooleanField(null=False, default=False)
     status = models.CharField(max_length=10, choices=[(status.value, status.value) for status in Status])
 
-    user = models.OneToOneField(User, null=True, on_delete=models.SET_NULL)
+    user = models.OneToOneField(User, null=True, on_delete=models.SET_NULL, related_name='employee')
     organization = models.ForeignKey(Organization, null=True, on_delete=models.SET_NULL)
     is_resource = models.BooleanField(null=False, default=False)
     email_confirmed = models.BooleanField(null=False, default=False)
