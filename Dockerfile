@@ -1,17 +1,19 @@
-FROM python:3-slim
+FROM python:3.8.3-alpine
 
-ARG APP_ENV
+WORKDIR /usr/src/app
 
-ENV APP_ENV=${APP_ENV} \
-    PYTHONUNBUFFERED=1 \
-    POETRY_VERSION=1.0.5
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-RUN pip install "poetry=${POETRY_VERSION}"
+# Dependencies
+RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
 
-WORKDIR /code
-COPY poetry.lock pyproject.toml manage.py /code/
+RUN pip install --upgrade pip
+COPY ./requirements.txt .
+RUN pip install -r requirements.txt
 
-RUN poetry config virtualenvs.create false \
-    && poetry install $(test "$APP_ENV" == production && echo "--no-dev") --no-interaction --no-ansi
+COPY ./entrypoint.sh .
 
-COPY . /code
+COPY . .
+
+ENTRYPOINT [ "/usr/src/app/entrypoint.sh" ]

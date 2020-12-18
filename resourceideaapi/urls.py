@@ -17,9 +17,12 @@ from django.contrib import admin  # type: ignore
 from django.urls import include
 from django.urls import path
 from rest_framework_simplejwt import views as jwt_views
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+
+from common.views import MyTokenObtainPairView
 
 
-BASE_API_URL = 'api/v0.1/'
+BASE_API_URL = ''  # 'api/v0.1/'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -36,10 +39,10 @@ urlpatterns = [
     path(f'{BASE_API_URL}', include('job_position.api.urls')),
 
     path('', include('home.urls')),
-    path('api/token/',
-         jwt_views.TokenObtainPairView.as_view(),
-         name='token_obtain_pair'),
-    path('api/token/refresh/',
-         jwt_views.TokenRefreshView.as_view(),
-         name='token_refresh'),
+    path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
