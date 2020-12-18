@@ -18,9 +18,9 @@ class Command(BaseCommand):
     help = 'Creates super user'
 
     def handle(self, *args, **options) -> None:
-        user: User = get_user_model()
+        user: User = get_user_model()  # type: ignore
         if not User.objects.filter(username='admin').exists():
-            admin_user = user.objects.create_superuser(username='admin',
+            admin_user = user.objects.create_superuser(username='admin',  # type: ignore
                                                        email='admin@resourceidea.com',
                                                        password=os.environ.get('SUPERUSER_PASSWORD'),
                                                        first_name='Joseph',
