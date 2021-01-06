@@ -4,13 +4,13 @@ on:
   pull_request:
     branches:
       - develop
-      - prod
+      - main
   
   push:
     branches:
       - '**'
       - '!develop'
-      - '!prod'
+      - '!main'
 
 env:
   POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
@@ -21,6 +21,7 @@ env:
   POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
   POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
   ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
+  CORS_ALLOWED_ORIGINS: ${{ secrets.CORS_ALLOWED_ORIGINS }}
   DJANGO_SETTINGS_MODULE: resourceideaapi.settings
 
 jobs:
