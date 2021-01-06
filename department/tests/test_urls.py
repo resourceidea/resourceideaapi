@@ -33,7 +33,6 @@ class TestDepartmentEndpoints:
         url = reverse('department-list')
         response = api_client.get(url)
         assert response.status_code == 200
-        assert isinstance(response.json(), list)
 
     def test_update_department(self, api_client, organization, department):
         url = reverse('department-detail', args=[department.id])

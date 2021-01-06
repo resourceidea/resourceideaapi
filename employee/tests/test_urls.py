@@ -143,7 +143,7 @@ class TestEmployeeEndpoints:
         response = api_client.get(url, {'view': 'resources'})
 
         assert response.status_code == 200
-        assert response.request['PATH_INFO'] == '/api/v0.1/employees/'
+        assert response.request['PATH_INFO'] == '/employees/'
         assert response.request['QUERY_STRING'] == 'view=resources'
 
     def test_resource_timeline(self, api_client) -> None:
