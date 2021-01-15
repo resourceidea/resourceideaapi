@@ -13,7 +13,7 @@ class BaseAPITestCase(APITestCase):
     def setUp(self):
         create_administrator_groups()
         create_resource_groups()
-        self.user = User.objects.create_user(username=self.user_username,
+        self.user = User.objects.create_user(username=self.user_username,  # type: ignore
                                              password=self.user_password,
                                              first_name='Serunjogi',
                                              last_name='Joseph')
@@ -25,6 +25,6 @@ class BaseAPITestCase(APITestCase):
             '/api/token/',
             data={'username': self.user_username,
                   'password': self.user_password})
-        self.access_token = response.data['access']
-        self.client.credentials(
+        self.access_token = response.data['access']  # type: ignore
+        self.client.credentials(  # type: ignore
             HTTP_AUTHORIZATION=f'Bearer {self.access_token}')

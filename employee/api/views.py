@@ -105,9 +105,9 @@ class ResourcesTimelineView(APIView):
 
     def get(self, request, format=None):
         # TODO (Joseph Serunjogi): Log entry of resource timeline view method.
-        organization_id: UUID = self.request.user.employee.organization_id
-        from_input: str = self.request.query_params.get('from', None)
-        to_input: str = self.request.query_params.get('to', None)
+        organization_id: UUID = self.request.user.employee.organization_id  # type: ignore
+        from_input: str = self.request.query_params.get('from', None)  # type: ignore
+        to_input: str = self.request.query_params.get('to', None)  # type: ignore
 
         from_conversion, to_conversion = self._convert_period_input(from_input, to_input)
         start_date: date = from_conversion.date()

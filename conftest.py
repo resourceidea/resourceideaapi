@@ -1,6 +1,5 @@
 from typing import List
 from employee.models import Employee
-from organization.models import Organization
 
 import pytest
 from django.core.management import call_command
@@ -57,7 +56,7 @@ def employees_list(organization):
         fake_employee = EmployeeFactory(organization=organization)  # type: ignore
         if i in [1, 2, 3]:
             fake_employee.is_resource = False
-        fake_employee.save()
+        fake_employee.save()  # type: ignore
         fake_employees_list.append(fake_employee)
 
     return fake_employees_list

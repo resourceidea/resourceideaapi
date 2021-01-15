@@ -1,4 +1,3 @@
-from common.validators.organization_validators import is_organization_user
 import os
 
 from django.contrib.auth import get_user_model
