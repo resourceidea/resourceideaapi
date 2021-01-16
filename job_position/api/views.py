@@ -26,3 +26,9 @@ class JobPositionViewSet(mixins.CreateModelMixin,
         serializer = JobPositionSerializer(queryset, many=True)
 
         return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        """
+        TODO: Customize the job position create operation
+        """
+        return super().create(request, *args, **kwargs)
