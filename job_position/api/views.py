@@ -28,4 +28,4 @@ class JobPositionViewSet(mixins.CreateModelMixin,
         return Response(serializer.data)
 
     def perform_create(self, serializer):
-        serializer.save(organization_id=self.request.user.employee.organization)
+        serializer.save(organization_id=self.request.user.employee.organization.id)
