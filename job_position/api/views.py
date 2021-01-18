@@ -16,7 +16,7 @@ class JobPositionViewSet(mixins.CreateModelMixin,
     serializer_class = JobPositionSerializer
 
     def get_queryset(self):
-        return JobPosition.objects.filter(organization=self.request.user.employee.organization)  # type: ignore
+        return JobPosition.objects.filter(organization=self.request.user.employee.organization)
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
@@ -27,8 +27,5 @@ class JobPositionViewSet(mixins.CreateModelMixin,
 
         return Response(serializer.data)
 
-    def create(self, request, *args, **kwargs):
-        """
-        TODO: Customize the job position create operation
-        """
-        return super().create(request, *args, **kwargs)
+    def perform_create(self, serializer):
+        serializer.save(organization_id=self.request.user.employee.organization)
